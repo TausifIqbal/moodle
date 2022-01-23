@@ -169,6 +169,7 @@ $summarydata['state'] = array(
 if ($attempt->state == quiz_attempt::FINISHED) {
     $summarydata['completedon'] = array(
         'title'   => get_string('completedon', 'quiz'),
+        // 'content' => "can do better",
         'content' => userdate($attempt->timefinish),
     );
     $summarydata['timetaken'] = array(

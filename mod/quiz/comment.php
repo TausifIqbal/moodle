@@ -76,11 +76,13 @@ $summarydata['quizname'] = array(
 // Question name.
 $summarydata['questionname'] = array(
     'title'   => get_string('question', 'quiz'),
+    // 'content' => "BTP",
     'content' => $attemptobj->get_question_name($slot),
 );
 
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
+    
     if (optional_param('submit', false, PARAM_BOOL) && question_engine::is_manual_grade_in_range($attemptobj->get_uniqueid(), $slot)) {
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_submitted_actions(time());
@@ -120,6 +122,7 @@ echo $attemptobj->render_question_for_commenting($slot);
     <input type="hidden" name="slots" value="<?php echo $slot; ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 </div>
+<!-- <input id="id_submitbutton" type="submit" name="submit" class="btn btn-primary" value="annotate"/> -->
 <fieldset class="hidden">
     <div>
         <div class="fitem fitem_actionbuttons fitem_fsubmit">

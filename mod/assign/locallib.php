@@ -298,6 +298,7 @@ class assign {
      */
     public function set_instance(stdClass $data) {
         $this->instance = $data;
+        // var_dump($data);
     }
 
     /**
@@ -486,7 +487,6 @@ class assign {
         if (!empty($this->get_course_module()->id)) {
             $nextpageparams['id'] = $this->get_course_module()->id;
         }
-
         // Handle form submissions first.
         if ($action == 'savesubmission') {
             $action = 'editsubmission';
@@ -4634,7 +4634,6 @@ class assign {
      */
     protected function view_grader() {
         global $USER, $PAGE;
-
         $o = '';
         // Need submit permission to submit an assignment.
         $this->require_view_grades();
@@ -4665,8 +4664,8 @@ class assign {
         $this->update_effective_access($userid);
 
         $o .= $this->get_renderer()->render($framegrader);
-
         $o .= $this->view_footer();
+        // $o .="goku";
 
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
@@ -4679,7 +4678,7 @@ class assign {
      */
     protected function view_grading_page() {
         global $CFG;
-
+        // echo"view_grading_page";
         $o = '';
         // Need submit permission to submit an assignment.
         $this->require_view_grades();
