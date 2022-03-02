@@ -1839,8 +1839,16 @@ class quiz_attempt {
         $options = $this->get_display_options(true);
         $options->hide_all_feedback();
         $options->manualcomment = question_display_options::EDITABLE;
-        return $this->quba->render_question($slot, $options,
+        // $options->manualcomment = null;
+        $res =  $this->quba->render_question($slot, $options,
                 $this->get_question_number($slot));
+        $res .= '<input id="id_submitbutton" type="submit" name="submit" class="btn btn-primary" value="annotate"/>';
+        echo $res;
+
+        $options2 = $this->get_display_options(true);
+        $options2->hide_all_feedback();
+        $options2->manualcomment = question_display_options::EDITABLE;
+        return "";
     }
 
     /**

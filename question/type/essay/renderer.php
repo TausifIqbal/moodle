@@ -112,6 +112,8 @@ class qtype_essay_renderer extends qtype_renderer {
         $step = $qa->get_last_step_with_qt_var('attachments');
 
         foreach ($files as $file) {
+            $temp = $qa->get_response_file_url($file);
+            // var_dump($temp);
             $out = html_writer::link($qa->get_response_file_url($file),
                 $this->output->pix_icon(file_file_icon($file), get_mimetype_description($file),
                     'moodle', array('class' => 'icon')) . ' ' . s($file->get_filename()));
@@ -127,6 +129,7 @@ class qtype_essay_renderer extends qtype_renderer {
                     'file' => $file]);
             }
             $filelist[] = html_writer::tag('li', $out, ['class' => 'mb-2']);
+            // var_dump($file);
         }
 
         $labelbyid = $qa->get_qt_field_name('attachments') . '_label';

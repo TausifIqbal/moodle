@@ -76,13 +76,11 @@ $summarydata['quizname'] = array(
 // Question name.
 $summarydata['questionname'] = array(
     'title'   => get_string('question', 'quiz'),
-    // 'content' => "BTP",
     'content' => $attemptobj->get_question_name($slot),
 );
 
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
-    
     if (optional_param('submit', false, PARAM_BOOL) && question_engine::is_manual_grade_in_range($attemptobj->get_uniqueid(), $slot)) {
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_submitted_actions(time());
@@ -115,14 +113,75 @@ echo $output->review_summary_table($summarydata, 0);
 echo '<form method="post" class="mform" id="manualgradingform" action="' .
         $CFG->wwwroot . '/mod/quiz/comment.php">';
 echo $attemptobj->render_question_for_commenting($slot);
+
+$qa = $attemptobj->get_question_attempt($slot);
+
+$options = $attemptobj->get_display_options(true);
+
+$files = $qa->get_last_qt_files('attachments', $options->context->id);
+
+// get the pdf url 
+$fileurl = "";
+foreach ($files as $file) {
+    $out = $qa->get_response_file_url($file);
+    $url = (explode("?", $out))[0];
+    $fileurl = $url;
+}
+
+$attemptid = $attemptobj->get_attemptid();
+$contextid = $options->context->id;
+$filename = end(explode("/", $fileurl));
+// take care of special character
+$filename = str_replace('%20', '', $filename); // replace space
+$filename = str_replace('%28', '(', $filename); // replace (
+$filename = str_replace('%29', ')', $filename); // replace )
+
+$contextID = $options->context->id;
+$component = 'question';
+$filearea = 'response_attachments';
+$filepath = '/';
+$itemid = $attemptobj->get_attemptid();
+
+$fs = get_file_storage();
+
+// check if the pdf exists or not in database
+$doesExists = $fs->file_exists($contextID, $component, $filearea, $itemid, $filepath, $filename);
+if($doesExists === true)
+{
+    $file = $fs->get_file($contextID, $component, $filearea, $itemid, $filepath, $filename);
+    $url1 = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false);
+    $file = $fs->get_file($contextID, $component, $filearea, $itemid, $filepath, $filename);
+    $temp = file_encode_url(new moodle_url('/pluginfile.php'), '/' . implode('/', array(
+        $file->get_contextid(),
+        $file->get_component(),
+        $file->get_filearea(),
+        $qa->get_usage_id(),
+        $qa->get_slot(),
+        $file->get_itemid())) .
+        $file->get_filepath() . $file->get_filename(), true);
+    
+    $url1 = (explode("?", $temp))[0];
+    $fileurl = $url1;
+}
+
+include "./myindex.html";
+
 ?>
+<script type="text/javascript">
+    var fileurl = "<?= $fileurl ?>"
+    var contextID = "<?= $contextid ?>";
+    var attemptID = "<?= $attemptid ?>";
+    var filename = "<?= $filename ?>"; 
+</script>
+
+<script type="text/javascript" src="./myscript.js"></script>
+
 <div>
     <input type="hidden" name="attempt" value="<?php echo $attemptobj->get_attemptid(); ?>" />
     <input type="hidden" name="slot" value="<?php echo $slot; ?>" />
     <input type="hidden" name="slots" value="<?php echo $slot; ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 </div>
-<!-- <input id="id_submitbutton" type="submit" name="submit" class="btn btn-primary" value="annotate"/> -->
 <fieldset class="hidden">
     <div>
         <div class="fitem fitem_actionbuttons fitem_fsubmit">

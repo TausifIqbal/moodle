@@ -445,6 +445,9 @@ class assign {
         $names = core_component::get_plugin_list($subtype);
 
         foreach ($names as $name => $path) {
+            // if($name == 'editpdf'){
+            //     continue;
+            // }
             if (file_exists($path . '/locallib.php')) {
                 require_once($path . '/locallib.php');
 
@@ -4650,7 +4653,7 @@ class assign {
         $PAGE->set_title($title);
 
         $o .= $this->get_renderer()->header();
-
+        
         $userid = optional_param('userid', 0, PARAM_INT);
         $blindid = optional_param('blindid', 0, PARAM_INT);
 
@@ -4662,10 +4665,10 @@ class assign {
         $framegrader = new grading_app($userid, $currentgroup, $this);
 
         $this->update_effective_access($userid);
-
+        // $o .="goku";
         $o .= $this->get_renderer()->render($framegrader);
         $o .= $this->view_footer();
-        // $o .="goku";
+        
 
         \mod_assign\event\grading_table_viewed::create_from_assign($this)->trigger();
 
